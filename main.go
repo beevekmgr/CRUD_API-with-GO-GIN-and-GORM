@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 var db *gorm.DB
@@ -15,10 +15,11 @@ type Person struct{
     ID uint `json:"id"`
     FirstName string `json:"firstname"`
     LastName string `js9on:"lastname"`
+    City string `json:"city"`
 }
    func main() {
 
-    db, err = gorm.Open("sqlite3", "./gorm.db")
+    db, _ = gorm.Open("mysql", "root:password@tcp(127.0.0.1:3306)/VALORANT?charset=utf8&parseTime=True&loc=Local")
     if err != nil {
         fmt.Println(err)
       }
@@ -64,7 +65,7 @@ type Person struct{
     fmt.Println(d)
     c.JSON(200, gin.H{"id #" + id: "deleted"})
    }
-   
+
    func UpdatePerson(c *gin.Context) {
     var person Person
     id := c.Params.ByName("id")
