@@ -29,8 +29,9 @@ type Person struct{
     r := gin.Default()
     r.GET("/people", GetPeople)
     r.GET("/people/:id",GetPerson)
-      r.POST("/people",CreatePerson)
+    r.POST("/people",CreatePerson)
     r.DELETE("/people/:id",DeletePerson)
+    r.PUT("/people/:id", UpdatePerson)
 
     r.Run(":8080")
 
@@ -62,6 +63,18 @@ type Person struct{
     d := db.Where("id = ?", id).Delete(&person)
     fmt.Println(d)
     c.JSON(200, gin.H{"id #" + id: "deleted"})
+   }
+   
+   func UpdatePerson(c *gin.Context) {
+    var person Person
+    id := c.Params.ByName("id")
+    if err := db.Where("id = ?", id).First(&person).Error; err != nil {
+       c.AbortWithStatus(404)
+       fmt.Println(err)
+    }
+    c.BindJSON(&person)
+    db.Save(&person)
+    c.JSON(200, person)
    }
 
    func GetPeople(c *gin.Context){
